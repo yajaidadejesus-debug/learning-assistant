@@ -64,6 +64,19 @@
       font-size: 14px;
     }
     #send-btn:hover { background: #005bb5; }
+    .assistant ul, .assistant ol {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+    .assistant li {
+      margin-bottom: 4px;
+    }
+    .assistant p {
+      margin-bottom: 8px;
+    }
+    .assistant h1, .assistant h2, .assistant h3 {
+      margin: 10px 0 4px;
+    }
   </style>
 </head>
 <body>
@@ -112,7 +125,7 @@
         addMessage('assistant', reply);
         history.push({ role: 'assistant', content: reply });
       } catch (err) {
-        addMessage('assistant', 'DEBUG: ' + err.message);
+        addMessage('assistant', 'Something went wrong. Please try again.');
       }
 
       sendBtn.disabled = false;
