@@ -107,7 +107,7 @@
         addMessage('assistant', reply);
         history.push({ role: 'assistant', content: reply });
       } catch (err) {
-        addMessage('assistant', 'Something went wrong. Please try again.');
+        addMessage('assistant', 'DEBUG: ' + err.message);
       }
 
       sendBtn.disabled = false;
