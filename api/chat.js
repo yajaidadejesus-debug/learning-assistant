@@ -23,9 +23,10 @@ export default async function handler(req, res) {
   });
 
   const data = await response.json();
+  console.log('OpenAI status:', response.status);
+  console.log('OpenAI response:', JSON.stringify(data));
 
-  if (!response.ok) {
-    console.error('OpenAI error:', JSON.stringify(data));
+  if (!response.ok || !data.choices) {
     return res.status(500).json({ error: data.error?.message || 'OpenAI request failed' });
   }
 
