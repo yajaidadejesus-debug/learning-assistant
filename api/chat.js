@@ -7,29 +7,36 @@ export default async function handler(req, res) {
 
   const { messages } = req.body;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o',
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        ...messages
-      ]
-    })
-  });
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...messages
+        ]
+      })
+    });
 
-  const data = await response.json();
-  console.log('OpenAI status:', response.status);
-  console.log('OpenAI response:', JSON.stringify(data));
+    const data = await response.json();
 
-  if (!response.ok || !data.choices) {
-    return res.status(500).json({ error: data.error?.message || 'OpenAI request failed' });
+    if (!response.ok) {
+      return res.status(200).json({ reply: `DEBUG ERROR: HTTP ${response.status} - ${JSON.stringify(data.error)}` });
+    }
+
+    if (!data.choices || data.choices.length === 0) {
+      return res.status(200).json({ reply: `DEBUG ERROR: No choices returned. Full response: ${JSON.stringify(data)}` });
+    }
+
+    const reply = data.choices[0].message.content;
+    res.status(200).json({ reply });
+
+  } catch (err) {
+    return res.status(200).json({ reply: `DEBUG ERROR: ${err.message}` });
   }
-
-  const reply = data.choices[0].message.content;
-  res.status(200).json({ reply });
 }
