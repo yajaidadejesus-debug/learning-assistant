@@ -25,18 +25,14 @@ module.exports = async function handler(req, res) {
 
     const data = await response.json();
 
-    if (!response.ok) {
-      return res.status(200).json({ reply: `DEBUG ERROR: HTTP ${response.status} - ${JSON.stringify(data.error)}` });
-    }
-
-    if (!data.choices || data.choices.length === 0) {
-      return res.status(200).json({ reply: `DEBUG ERROR: No choices returned. Full response: ${JSON.stringify(data)}` });
+    if (!response.ok || !data.choices || data.choices.length === 0) {
+      return res.status(500).json({ error: 'OpenAI request failed' });
     }
 
     const reply = data.choices[0].message.content;
     res.status(200).json({ reply });
 
   } catch (err) {
-    return res.status(200).json({ reply: `DEBUG ERROR: ${err.message}` });
+    return res.status(500).json({ error: 'Something went wrong' });
   }
 }
